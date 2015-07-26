@@ -6,6 +6,11 @@
  */
 
 module.exports = {
-	
+  findAll: function (req, res) {
+    Tag.find(function foundTags(err, tags) {
+      if (err) return next(err);
+      res.view ( {tags: tags});
+    });
+  }
 };
 
