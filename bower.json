@@ -1,0 +1,17 @@
+{
+  "name": "championProject",
+  "version": "0.0.0",
+  "homepage": "https://github.com/roideuniverse/ChampionProject",
+  "authors": [
+    "Kaushik Saurabh <roideuniverse@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/bower_components",
+    "test",
+    "tests"
+  ]
+}
