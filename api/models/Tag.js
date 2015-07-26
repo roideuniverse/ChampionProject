@@ -9,7 +9,9 @@ module.exports = {
 
   attributes: {
     name: {
-      type: 'string'
+        type: 'string',
+        required: true,
+        unique: true
     },
 
     //add reference to Notes
