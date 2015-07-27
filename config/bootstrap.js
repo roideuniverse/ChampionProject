@@ -59,9 +59,9 @@ module.exports.bootstrap = function (cb) {
     while (newTags.length)
       storeTags.push(newTags.pop())
 
-    ShortNote.create(shortNotes).exec(afterNotes)
+    ShortNote.findOrCreate(shortNotes).exec(afterNotes)
   };
 
 
-  Tag.create(tags).exec(afterTag)
+  Tag.findOrCreate(tags).exec(afterTag)
 };

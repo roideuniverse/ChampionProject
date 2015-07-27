@@ -1,0 +1,22 @@
+{
+  "name": "championProject",
+  "version": "0.0.0",
+  "homepage": "https://github.com/roideuniverse/ChampionProject",
+  "authors": [
+    "Kaushik Saurabh <roideuniverse@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-sails-bind": "~1.0.6",
+    "angular": "~1.4.3",
+    "angular-xeditable": "~0.1.9"
+  }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angular-xeditable Starter Template</title>
+  <!-- Bootstrap 3 css -->
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Angular.js -->
+  <script src="/bower_components/angular/angular.js"></script>
+  <!-- Angular-xeditable -->
+  <link href="/bower_components/angular-xeditable/dist/css/xeditable.css" rel="stylesheet">
+  <script src="/bower_components/angular-xeditable/dist/js/xeditable.js"></script>
+  <script src="/bower_components/angular-sails-bind/dist/angular-sails-bind.js"></script>
+  <!-- app.js -->
+  <script>
+    var app = angular.module("app", ["xeditable", "ngSailsBind"]);
+
+    app.run(function(editableOptions) {
+      editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+    });
+
+    app.controller("tagCtrl", function($scope, $sailsBind) {
+        $scope.showAddTag = false;
+        $scope.newTag = {};
+        $scope.Tags = {};
+        $sailsBind.bind('Tag', $scope);
+        $scope.saveTag = function(data, id){
+            console.log("saveTag");
+            console.log("id=" + id);
+            console.log(data);
+            angular.extend(data, {id: id});
+        };
+
+        $scope.removeTag = function(index) {
+            console.log("removeTag::index=" + index);
+            $scope.Tags.splice(index, 1);
+        };
+
+        $scope.addTag = function(tag) {
+            console.log("addTag");
+            $scope.inserted = tag;
+
+            var name = tag.name;
+            for(var i=0; i<$scope.Tags.length; i++) {
+                var tag1 = $scope.Tags[i];
+                if(tag1.name == name) {
+                    console.log('match-returning');
+                    return;
+                }
+            }
+            $scope.Tags.push($scope.inserted);
+        };
+
+        $scope.createTag = function(data) {
+            console.log('createTag');
+            console.log(data);
+            if( ! data.name ) {
+                console.log('undefined name return');
+                return;
+            }
+            $scope.addTag(data);
+            $scope.newTag = {};
+
+        }
+
+        $scope.showAddTagFunc = function() {
+            $scope.showAddTag = ! $scope.showAddTag;
+            $scope.newTag = {};
+        }
+    });
+  </script>
+
+
+</head>
+<body style="padding: 50px">
+<div ng-controller="tagCtrl">
+
+    <table class="table table-bordered table-hover table-condensed">
+        <tr style="font-weight: bold">
+            <td style="width:35%">Name</td>
+            <td style="width:10%">Edit</td>
+        </tr>
+        <tr ng-repeat="tag in Tags track by tag.id | orderBy: 'name'">
+            <td>
+                <!-- editable username (text with validation) -->
+                <span editable-text="tag.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, tag.id)" e-required>
+                  {{ tag.name || 'empty' }}
+                </span>
+            </td>
+            <td style="white-space: nowrap">
+                <!-- form -->
+                <form editable-form name="rowform" onbeforesave="saveTag($data, tag.id)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == tag">
+                    <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                        save
+                    </button>
+                    <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                        cancel
+                    </button>
+                </form>
+                <div class="buttons" ng-show="!rowform.$visible">
+                    <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
+                    <button class="btn btn-danger" ng-click="removeTag($index)">del</button>
+                </div>
+            </td>
+    </table>
+
+    <!-- VVVVVV -->
+    <button class="btn btn-default" ng-click="showAddTagFunc() " style="margin: 20px">Add row</button>
+    <div ng-show="showAddTag" style="padding: 20px">
+        <!--        <span editable-text="tag.name" e-name="name" e-form="addTagForm" onbeforesave="checkName($data, tag.id)" e-required>
+                              {{ tag.name || 'empty' }}
+                </span>-->
+        <form editable-form name="addTagForm" ng-show="showAddTag" class="form-buttons form-inline" shown="inserted == tag">
+            <input type="text" ng-model="newTag.name">
+            <button type="submit" ng-disabled="addTagForm.$waiting" class="btn btn-primary" ng-click="createTag(newTag)">
+                save
+            </button>
+            <button type="button" ng-disabled="addTagForm.$waiting" ng-click="showAddTagFunc()" class="btn btn-default">
+                cancel
+            </button>
+        </form>
+    </div>
+    <!-- ^^ ^^ ^^-->
+
+</div>
+
+</body>
+</html>
