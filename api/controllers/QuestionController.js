@@ -6,6 +6,8 @@
  */
 
 module.exports = {
-	
+	addQuestion: function(req, res) {
+        res.view();
+    }
 };
 
