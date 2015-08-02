@@ -1,0 +1,132 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular-xeditable Starter Template</title>
+<!-- Bootstrap 3 css -->
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- Angular.js -->
+<script src="/bower_components/angular/angular.js"></script>
+<!-- Angular-xeditable -->
+<link href="/bower_components/angular-xeditable/dist/css/xeditable.css" rel="stylesheet">
+<script src="/bower_components/angular-xeditable/dist/js/xeditable.js"></script>
+<script src="/bower_components/angular-sails-bind/dist/angular-sails-bind.js"></script>
+<style type="text/css">
+    .css-form input.ng-invalid.ng-touched {
+        background-color: #FA787E;
+    }
+
+    .css-form input.ng-valid.ng-touched {
+        background-color: #78FA89;
+    }
+</style>
+
+<script>
+    angular.module('FormModule', [])
+        .controller('FormController', ['$scope', function($scope) {
+            $scope.form_question = {};
+            $scope.form_notes = {};
+
+            $scope.save = function(form_question, form_notes) {
+                if(!form_question.text) {
+                    console.log('question text is empty');
+                    return;
+                }
+
+                if(!form_question.difficulty) {
+                    console.log('difficulty not selected');
+                    return;
+                }
+
+                if(!form_question.importance) {
+                    console.log(' importance not selected');
+                    return;
+                }
+
+                if(!form_question.tags) {
+                    console.log('tags empty');
+                    return;
+                }
+
+                var result = function(resData, jsRes) {
+                    console.log(resData)
+                    if(resData.success === true) {
+                        alert('success');
+                    }
+                    else {
+                        alert('failure');
+                    }
+                };
+
+                io.socket.post('/Question/addQuestion', {question: form_question, notes: form_notes}, result);
+
+            };
+
+            $scope.reset = function () {
+                console.log('reset');
+                $scope.form_question = {};
+                $scope.form_notes = {};
+            };
+
+            $scope.reset();
+        }]);
+</script>
+
+<div ng-app="FormModule" style="padding: 50px" ng-controller="FormController">
+    <form class="css-form" name="form">
+        <p style="margin: 20px"> Enter Question </p>
+        <textarea rows="10" cols="100" style="margin: 20px" required ng-model="form_question.text"></textarea>
+        <br>
+        <div style="margin: 20px">
+            Tags: <input type="text" ng-model="form_question.tags">
+
+            Difficulty:
+
+            <select convert-to-number style="width: 100px" required ng-model="form_question.difficulty">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+
+            Importance:
+            <select convert-to-number style="width: 100px" required ng-model="form_question.importance">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+        <br>
+        <div style="margin: 20px">
+            Notes: <textarea rows="2" cols="20" ng-model="form_notes.ntext"></textarea>
+            Note Tags: <textarea rows="2" cols="20" ng-model="form_notes.ntags"></textarea>
+            Notes Importance:
+            <select convert-to-number style="width: 100px" ng-model="form_notes.nimportance">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+        <input type="button" value="Save" class="btn btn-primary" style="margin: 20px" ng-click="save(form_question, form_notes)">
+        <input type="button" ng-click="reset()" value="Reset" class="btn btn-primary"/>
+    </form>
+</div>
