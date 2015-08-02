@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angular-xeditable Starter Template</title>
+    <!-- Bootstrap 3 css -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Angular.js -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-sails-bind/dist/angular-sails-bind.js"></script>
+    <!-- app.js -->
+    <script>
+        var app = angular.module("app", ["ngSailsBind"]);
+
+        app.controller("questionCtrl", function($scope, $sailsBind, $window) {
+            $scope.Questions = {};
+
+            $scope.tagList = [];
+
+            $scope.selected = { };
+
+            $scope.question_clicked = function(question) {
+                console.log('question-clicked');
+                console.log(question);
+                //$window.open('/Tag/findAll');
+            };
+
+            $sailsBind.bind('Question', $scope, null, function() {
+                console.log('all questions fetched');
+                $scope.Questions.forEach(function(ques) {
+                    ques.attemptsCount = ques.attempts.length;
+                    if(ques.difficulty) {
+                        var sum = 0;
+                        for(var i=0; i<ques.difficulty.length; i++) {
+                            sum = sum + ques.difficulty[i];
+                        }
+                        ques.averageDifficulty = sum/ques.difficulty.length;
+
+                        if(ques.tags) {
+                            ques.tags.forEach(function(tag) {
+                                var count = $scope.tagList.length;
+                                var id = count +1;
+                                for(var i=0; i<count; i++) {
+                                    var item = $scope.tagList[i];
+                                    if(item.label === tag.name) {
+                                        return;
+                                    }
+                                }
+                                var tagItem = { id: id, label: tag.name, subItem: { name: tag.name } };
+                                $scope.tagList.push(tagItem);
+                            });
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+
+    <style type="text/css">
+        .tags {
+            font-family: Helvetica, Arial, sans-serif;
+            background: #428bca;
+            display: inline-block;
+            color: #ffffff;
+            position: relative;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 4px;
+            margin: 5px;
+            text-decoration: none;
+        }
+    </style>
+
+
+</head>
+<body style="padding: 50px">
+<div ng-controller="questionCtrl">
+
+    <div style="padding-bottom: 20px">
+        <h2>Top Questions: </h2>
+        <label> Solved
+            <input type="checkbox"/>
+        </label>
+        <label> Unsolved
+            <input type="checkbox"/>
+        </label>
+        <label> Hard
+            <input type="checkbox"/>
+        </label>
+        <label> Medium
+            <input type="checkbox"/>
+        </label>
+
+        <br>
+        Tags:
+        <select
+            style="margin: 20px"
+            ng-options="item.subItem as item.label for item in tagList track by item.id"
+            ng-model="selected" >
+        </select>
+        Sort By:
+        <select style="margin: 20px">
+            <option value="0">Difficulty</option>
+            <option value="0">Attempts</option>
+            <option value="0">AverageTime</option>
+            <option value="0">Importance</option>
+        </select>
+    </div>
+
+    <table class="table table-bordered table-hover table-condensed">
+        <tr style="font-weight: bold">
+            <td style="width:80%">Questions</td>
+            <td style="width:5%">Attempts</td>
+            <td style="width:5%">AvgTime</td>
+            <td style="width:5%">Difficulty</td>
+            <td style="width:5%">Importance</td>
+        </tr>
+        <tr ng-repeat="question in Questions" ng-click="question_clicked(question)">
+            <td style="padding: 15px">
+                <div style="padding-bottom: 5px">
+                    {{ question.text }}
+                </div>
+                <br>
+                <p class="tags" ng-repeat="tags in question.tags">
+                    {{ tags.name }}
+                </p>
+
+            </td>
+            <td>
+                {{ question.attemptsCount }}
+            </td>
+            <td>
+                {{ question.avgTime }}
+            </td>
+            <td>
+                {{ question.averageDifficulty }}
+            </td>
+            <td>
+                {{ question.importance }}
+            </td>
+    </table>
+</div>
+
+</body>
+</html>
