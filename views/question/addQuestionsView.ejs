@@ -22,8 +22,8 @@
 <script>
     angular.module('FormModule', [])
         .controller('FormController', ['$scope', function($scope) {
-            $scope.question = {};
-            $scope.notes = {};
+            $scope.form_question = {};
+            $scope.form_notes = {};
 
             $scope.save = function(form_question, form_notes) {
                 if(!form_question.text) {
@@ -46,19 +46,24 @@
                     return;
                 }
 
-                console.log(form_question);
-                console.log(form_notes);
+                var result = function(resData, jsRes) {
+                    console.log(resData)
+                    if(resData.success === true) {
+                        alert('success');
+                    }
+                    else {
+                        alert('failure');
+                    }
+                };
 
-                io.socket.post('/Question/addQuestion', {question: form_question, notes: form_notes}, function(resData, jwRes) {
-                    console.log(resData);
-                    console.log('------');
-                });
+                io.socket.post('/Question/addQuestion', {question: form_question, notes: form_notes}, result);
+
             };
 
             $scope.reset = function () {
                 console.log('reset');
-                $scope.form_question = angular.copy($scope.question);
-                $scope.form_notes = angular.copy($scope.notes);
+                $scope.form_question = {};
+                $scope.form_notes = {};
             };
 
             $scope.reset();
@@ -66,7 +71,7 @@
 </script>
 
 <div ng-app="FormModule" style="padding: 50px" ng-controller="FormController">
-    <form class="css-form">
+    <form class="css-form" name="form">
         <p style="margin: 20px"> Enter Question </p>
         <textarea rows="10" cols="100" style="margin: 20px" required ng-model="form_question.text"></textarea>
         <br>
@@ -121,7 +126,7 @@
                 <option value="10">10</option>
             </select>
         </div>
-        <input type="submit" value="Save" class="btn btn-primary" style="margin: 20px" ng-click="save(form_question, form_notes)">
+        <input type="button" value="Save" class="btn btn-primary" style="margin: 20px" ng-click="save(form_question, form_notes)">
         <input type="button" ng-click="reset()" value="Reset" class="btn btn-primary"/>
     </form>
 </div>

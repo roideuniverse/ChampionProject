@@ -36,6 +36,8 @@ module.exports = {
                 thisQuestion.save(console.log);
             }
 
+            res.send({success: true});
+
         };
 
         var afterTags = function(err, tModelArray) {
