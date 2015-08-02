@@ -10,6 +10,10 @@ module.exports = {
         res.view();
     },
 
+    findAll: function(req, res) {
+        res.view();
+    },
+
     addQuestion: function(req, res) {
         console.log('----------- addQuestion -------');
 
