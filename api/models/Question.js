@@ -8,10 +8,12 @@
 module.exports = {
 
   attributes: {
+    text: 'string',
     solved: 'boolean',
     difficulty: 'array',
     averageDifficulty: 'float',
     averageScore: 'float',
+    importance: 'integer',
 
     //reference to Tag
     tags: {
