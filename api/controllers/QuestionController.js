@@ -7,19 +7,46 @@
 
 module.exports = {
 	addQuestionsView: function(req, res) {
-        res.view();
+        Tag.find().exec(function(err, models) {
+            res.view( {remoteTags: models} );
+        });
     },
 
     findAll: function(req, res) {
         res.view();
     },
 
+    solveQuestion: function(req, res) {
+        Question.findOne( {id: req.params.id })
+            .populate('tags')
+            .populate('notes')
+            .populate('attempts')
+            .exec(function(err, model) {
+                res.view( {question : model});
+            });
+    },
+
+    showDetailedQuestion: function(req, res) {
+        console.log("--------------- Show Details Question ------------");
+        console.log(req.params.id);
+        Question.findOne( {id: req.params.id })
+            .populate('tags')
+            .populate('notes')
+            .populate('attempts')
+            .exec(function(err, model) {
+                console.log(err);
+                console.log(model);
+                res.view( {question : model});
+            });
+    },
+
     addQuestion: function(req, res) {
         console.log('----------- addQuestion -------');
 
         var reqQuestion = req.body.question;
-        var reqTags = reqQuestion.tags;
+        var reqTags = req.body.tags;
         var notes = req.body.notes;
+        console.log(reqTags);
         var question = {
             text: reqQuestion.text,
             solved: false,
@@ -45,6 +72,10 @@ module.exports = {
         };
 
         var afterTags = function(err, tModelArray) {
+            console.log('---After--Tags----');
+            console.log(err);
+            console.log(tModelArray);
+
             while(tModelArray.length) {
                 storeTags.push(tModelArray.pop());
             }
@@ -53,13 +84,7 @@ module.exports = {
 
         var afterQuestion = function(err, qModel) {
             if(reqTags) {
-                var tempArr = reqTags.split(",");
-                var tagsArr = [];
-                for(var i=0; i <tempArr.length; i++) {
-                    var tag = {name: tempArr[i]};
-                    tagsArr.push(tag);
-                }
-                Tag.findOrCreate(tagsArr).exec(afterTags);
+                Tag.findOrCreate(reqTags).exec(afterTags);
             }
         };
 

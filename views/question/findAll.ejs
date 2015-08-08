@@ -20,10 +20,15 @@
 
             $scope.selected = { };
 
-            $scope.question_clicked = function(question) {
+            $scope.solve_question = function(question) {
+                console.log(question);
+                $window.open('/Question/solveQuestion/' + question.id);
+            },
+
+            $scope.detail_question_clicked = function(question) {
                 console.log('question-clicked');
                 console.log(question);
-                //$window.open('/Tag/findAll');
+                $window.open('/Question/showDetailedQuestion/' + question.id);
             };
 
             $sailsBind.bind('Question', $scope, null, function() {
@@ -61,7 +66,7 @@
     <style type="text/css">
         .tags {
             font-family: Helvetica, Arial, sans-serif;
-            background: #428bca;
+            background: #009688;
             display: inline-block;
             color: #ffffff;
             position: relative;
@@ -119,15 +124,20 @@
             <td style="width:5%">Difficulty</td>
             <td style="width:5%">Importance</td>
         </tr>
-        <tr ng-repeat="question in Questions" ng-click="question_clicked(question)">
+        <tr ng-repeat="question in Questions" >
             <td style="padding: 15px">
-                <div style="padding-bottom: 5px">
+                <div style="padding-bottom: 5px" ng-click="detail_question_clicked(question)">
                     {{ question.text }}
                 </div>
                 <br>
                 <p class="tags" ng-repeat="tags in question.tags">
                     {{ tags.name }}
                 </p>
+                <br>
+                <button type="button" class="btn btn-primary" style="margin-top: 10px"
+                        ng-click="solve_question(question)">Solve</button>
+                <button type="button" class="btn btn-primary" style="margin-top: 10px"
+                        ng-click="detail_question_clicked(question)">Details</button>
 
             </td>
             <td>

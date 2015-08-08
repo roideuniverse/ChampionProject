@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angular-xeditable Starter Template</title>
+    <!-- Bootstrap 3 css -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Angular.js -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-sails-bind/dist/angular-sails-bind.js"></script>
+    <!-- app.js -->
+    <script>
+        var app = angular.module("app", ["ngSailsBind"])
+            .constant('que', <%- JSON.stringify(question) %>);
+
+        app.controller("questionCtrl", ['$scope', '$sailsBind', 'que', function($scope, $sailsBind, que) {
+            $scope.question = angular.copy(que);
+            console.log($scope.question);
+        }]);
+
+    </script>
+
+</head>
+<body style="padding: 50px">
+<div ng-controller="questionCtrl">
+    <%= JSON.stringify(question) %>
+</div>
+
+</body>
+</html>
+

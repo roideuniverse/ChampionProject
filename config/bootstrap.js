@@ -16,12 +16,69 @@ module.exports.bootstrap = function (cb) {
   // cb();
   // After we create our tags, we will store them here to associate with our tags
   var storeTags = [];
-
-  var tags = [{name: 'Algorithm'}, {name: 'Array'}, {name: 'Linear'}];
   var shortNotes = [{text: 'Pinkie Pie'}, {text: 'Rainbow Dash'}, {text: 'Applejack'}]
+  var tags = [
+    {name: 'Dynamic Programming'},
+    {name: 'Bit Bytes'},
+    {name: 'Graph'},
+
+    {name: 'Binary Search'},
+    {name: 'Sorting'},
+    {name: 'Quick Sort'},
+    {name: 'Selection Sort'},
+    {name: 'Bubble Sort'},
+    {name: 'Insertion Sort'},
+    {name: 'Merge Sort'},
+    {name: 'Heap Sort'},
+    {name: 'Bucket Sort'},
+    {name: 'Shell sort'},
+    {name: 'K Sorted'},
+    {name: 'Almost Sorted'},
+    {name: 'Closest Pair'},
+
+    {name: 'Linked List'},
+    {name: 'Activity Selection'},
+    {name: 'Kruskal'},
+    {name: 'MST'},
+    {name: 'Huffman coding'},
+    {name: 'Dijkstra\'s'},
+    {name: 'Knapsack'},
+    {name: 'Bitonic Sequence'},
+    {name: 'Dynamic Programming'},
+    {name: 'Bellman Ford'},
+    {name: 'Subset Sum'},
+    {name: 'KMP'},
+    {name: 'Suffix Trees'},
+    {name: 'Suffix Array'},
+    {name: 'Trie'},
+    {name: 'Singly Linked List'},
+    {name: 'Circular Linked List'},
+    {name: 'Doubly Linked List'},
+    {name: 'Stack'},
+    {name: 'Queue'},
+    {name: 'Binary Tree'},
+    {name: 'Hashing'},
+    {name: 'Shortest Past'},
+    {name: 'Connectivity'},
+
+    {name: 'Max Flow'},
+    {name: 'AVL Tree'},
+    {name: 'Splay Tree'},
+    {name: 'B Tree'},
+    {name: 'Segment Tree'},
+    {name: 'Red Black Tree'},
+    {name: 'Interval Trees'},
+    {name: 'Decision Trees'},
+    {name: 'Spaghetti Stack'},
+    {name: 'KD Tree'},
+    {name: 'Binomial Heap'},
+    {name: 'Binary Indexed Tree'}
+  ];
 
 // This does the actual associating.
 // It takes one Pet then iterates through the array of newly created Users, adding each one to it's join table
+/*
+
   var associate = function (oneNote, cb) {
     var thisNote = oneNote;
     var callback = cb;
@@ -36,9 +93,12 @@ module.exports.bootstrap = function (cb) {
     })
   };
 
+*/
 
 // This callback is run after all of the tags are created.
 // It sends each new tags to 'associate' with our notes
+/*
+
   var afterNotes = function (err, newNotes) {
     while (newNotes.length) {
       var thisNote = newNotes.pop();
@@ -52,9 +112,10 @@ module.exports.bootstrap = function (cb) {
     // This callback lets us leave bootstrap.js and continue lifting our app!
     return cb()
   };
-
+*/
 // This callback is run after all of our Users are created.
 // It takes the returned User and stores it in our storeTags array for later.
+/*
   var afterTag = function (err, newTags) {
     while (newTags.length)
       storeTags.push(newTags.pop())
@@ -62,6 +123,7 @@ module.exports.bootstrap = function (cb) {
     ShortNote.findOrCreate(shortNotes).exec(afterNotes)
   };
 
+*/
 
-  Tag.findOrCreate(tags).exec(afterTag)
+  Tag.findOrCreate(tags).exec(cb);
 };
