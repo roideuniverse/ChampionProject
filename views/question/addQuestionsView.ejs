@@ -2,13 +2,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Angular-xeditable Starter Template</title>
 <!-- Bootstrap 3 css -->
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="/bower_components/ng-tags-input/ng-tags-input.css">
+<link href="/bower_components/angular-xeditable/dist/css/xeditable.css" rel="stylesheet">
+
 <!-- Angular.js -->
 <script src="/bower_components/angular/angular.js"></script>
 <!-- Angular-xeditable -->
-<link href="/bower_components/angular-xeditable/dist/css/xeditable.css" rel="stylesheet">
 <script src="/bower_components/angular-xeditable/dist/js/xeditable.js"></script>
 <script src="/bower_components/angular-sails-bind/dist/angular-sails-bind.js"></script>
+<script type="text/javascript" src="/bower_components/ng-tags-input/ng-tags-input.js"></script>
 <style type="text/css">
     .css-form input.ng-invalid.ng-touched {
         background-color: #FA787E;
@@ -20,113 +23,144 @@
 </style>
 
 <script>
-    angular.module('FormModule', [])
-        .controller('FormController', ['$scope', function($scope) {
+    var app = angular.module('FormModule', ['ngTagsInput'])
+        .constant('remoteTags', <%- JSON.stringify(remoteTags) %>);
+
+    app.controller('FormController', ['$scope', 'remoteTags', '$timeout', function ($scope, remoteTags, $timeout) {
+        $scope.form_question = {};
+        $scope.form_notes = {};
+        $scope.remoteTags = [];
+        $scope.selectedTags = [];
+
+        $scope.copyRemoteTags = function(remoteTags) {
+            var copiedTags = [];
+            for(var i=0; i<remoteTags.length; i++) {
+                var tag = {name : remoteTags[i].name };
+                $scope.remoteTags.push(tag);
+            }
+        };
+
+        $scope.save = function (form_question, form_notes) {
+            if (!form_question.text) {
+                console.log('question text is empty');
+                return;
+            }
+
+            if (!form_question.difficulty) {
+                console.log('difficulty not selected');
+                return;
+            }
+
+            if (!form_question.importance) {
+                console.log(' importance not selected');
+                return;
+            }
+
+            if ($scope.selectedTags.length == 0) {
+                console.log('tags empty');
+                return;
+            }
+
+            console.log($scope.selectedTags);
+
+            var result = function (resData, jsRes) {
+                console.log(resData)
+                if (resData.success === true) {
+                    alert('success');
+                    $timeout(function() {
+                        var el = document.getElementById('reset');
+                        angular.element(el).triggerHandler('click');
+                    }, 100);
+                }
+                else {
+                    alert('failure');
+                }
+            };
+
+            io.socket.post('/Question/addQuestion',
+                {
+                    question: form_question,
+                    notes: form_notes,
+                    tags: $scope.selectedTags
+                }, result);
+
+        };
+
+        $scope.reset = function () {
+            console.log('reset');
             $scope.form_question = {};
             $scope.form_notes = {};
+            $scope.selectedTags = [];
+        };
 
-            $scope.save = function(form_question, form_notes) {
-                if(!form_question.text) {
-                    console.log('question text is empty');
-                    return;
+        $scope.reset();
+        $scope.copyRemoteTags(remoteTags);
+
+        $scope.loadTags = function (query) {
+            var possibleMatches = [];
+            for(var i=0; i<$scope.remoteTags.length; i++) {
+                var tag = $scope.remoteTags[i];
+                if(tag.name.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+                    possibleMatches.push(tag);
                 }
+            }
+            return possibleMatches;
+        };
 
-                if(!form_question.difficulty) {
-                    console.log('difficulty not selected');
-                    return;
-                }
-
-                if(!form_question.importance) {
-                    console.log(' importance not selected');
-                    return;
-                }
-
-                if(!form_question.tags) {
-                    console.log('tags empty');
-                    return;
-                }
-
-                var result = function(resData, jsRes) {
-                    console.log(resData)
-                    if(resData.success === true) {
-                        alert('success');
-                    }
-                    else {
-                        alert('failure');
-                    }
-                };
-
-                io.socket.post('/Question/addQuestion', {question: form_question, notes: form_notes}, result);
-
-            };
-
-            $scope.reset = function () {
-                console.log('reset');
-                $scope.form_question = {};
-                $scope.form_notes = {};
-            };
-
-            $scope.reset();
-        }]);
+    }]);
 </script>
 
 <div ng-app="FormModule" style="padding: 50px" ng-controller="FormController">
     <form class="css-form" name="form">
-        <p style="margin: 20px"> Enter Question </p>
-        <textarea rows="10" cols="100" style="margin: 20px" required ng-model="form_question.text"></textarea>
-        <br>
+        <h2 style="margin-left: 20px"> Enter Question </h2>
+        <textarea
+            rows="10"
+            style="margin: 20px; padding: 20px; font-size: 1.3em; width: 75%"
+            required
+            ng-model="form_question.text"
+            >
+
+        </textarea>
+
         <div style="margin: 20px">
-            Tags: <input type="text" ng-model="form_question.tags">
+            Tags:
+            <tags-input
+                ng-model='selectedTags'
+                display-property="name"
+                key-property="name"
+                min-length="1"
+                replace-spaces-with-dashes="false"
+                style="line-height: 2em; width: 50%"
+                >
+                <auto-complete source="loadTags($query)"></auto-complete>
+            </tags-input>
+            <br>
 
             Difficulty:
 
-            <select convert-to-number style="width: 100px" required ng-model="form_question.difficulty">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
+            <select
+                convert-to-number
+                style="width: 200px; height: 2em"
+                required
+                ng-model="form_question.difficulty"
+                ng-options="values for values in [0,1,2,3,4,5,6,7,8,9,10]"
+                >
+                <option value="">Select Difficulty</option>
             </select>
 
             Importance:
-            <select convert-to-number style="width: 100px" required ng-model="form_question.importance">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
+            <select
+                convert-to-number
+                style="width: 200px; height: 2em;"
+                required ng-model="form_question.importance"
+                ng-options="values for values in [0,1,2,3,4,5,6,7,8,9,10]"
+                >
+                <option value="">Select Importance</option>
             </select>
         </div>
         <br>
-        <div style="margin: 20px">
-            Notes: <textarea rows="2" cols="20" ng-model="form_notes.ntext"></textarea>
-            Note Tags: <textarea rows="2" cols="20" ng-model="form_notes.ntags"></textarea>
-            Notes Importance:
-            <select convert-to-number style="width: 100px" ng-model="form_notes.nimportance">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-            </select>
-        </div>
-        <input type="button" value="Save" class="btn btn-primary" style="margin: 20px" ng-click="save(form_question, form_notes)">
-        <input type="button" ng-click="reset()" value="Reset" class="btn btn-primary"/>
+        <input type="button" value="Save" class="btn btn-primary" style="margin: 20px"
+               ng-click="save(form_question, form_notes)">
+        <input type="button" ng-click="reset()" value="Reset" class="btn btn-primary" id="reset"/>
     </form>
 </div>

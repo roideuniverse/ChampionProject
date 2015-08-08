@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angular-xeditable Starter Template</title>
+    <!-- Bootstrap 3 css -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Angular.js -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-sails-bind/dist/angular-sails-bind.js"></script>
+    <script src="/bower_components/angular-timer/dist/angular-timer.js"></script>
+    <script src="/bower_components/humanize-duration/humanize-duration.js"></script>
+    <script src="/bower_components/momentjs/moment.js"></script>
+    <!-- app.js -->
+    <script>
+        var app = angular.module("app", ["ngSailsBind", "timer"])
+            .constant('que', <%- JSON.stringify(question) %>);
+
+        app.controller("questionCtrl", ['$scope', '$sailsBind', 'que', function($scope, $sailsBind, que) {
+            $scope.question = angular.copy(que);
+            console.log($scope.question);
+        }]);
+
+    </script>
+
+</head>
+<body style="padding: 50px">
+<div ng-controller="questionCtrl">
+    <timer interval="1000">{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, {{seconds}} second{{secondsS}}.</timer>
+
+    <h3 ng-model="question">{{ question.text }} </h3>
+
+    <br>
+    <textarea ng-model="question.solution" cols="85" rows="15" ></textarea>
+    <br>
+    <button type="button" class="btn btn-primary" style="margin-top: 10px">Save</button>
+
+</div>
+
+</body>
+</html>
